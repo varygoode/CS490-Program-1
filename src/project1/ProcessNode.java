@@ -25,4 +25,10 @@ public class ProcessNode implements Comparable
     {
         return ((Integer)priority).compareTo(((ProcessNode)o).priority);
     }
+    
+    @Override
+    public String toString()
+    {
+        return "Process #" + processID + ", Priority " + priority;
+    }
 }

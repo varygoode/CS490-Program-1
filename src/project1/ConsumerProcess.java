@@ -1,31 +1,29 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package project1;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
- *
- * @author Rob
+ * Object that acts as a thread consuming resources
+ * @author Rob Vary
  */
 public class ConsumerProcess implements Runnable
 {
-    MinHeap heap;
-
-    public ConsumerProcess(MinHeap heap) 
+    private boolean stopped = false;
+    
+    //constructor
+    public ConsumerProcess() 
     {
-        this.heap = heap;
+        
     }
     
-    private void updateHeap()
+    //method to give a cue to stop
+    public void stop()
     {
-        this.heap = MinHeap.getInstance();
+        stopped = true;
     }
     
     @Override
@@ -33,18 +31,25 @@ public class ConsumerProcess implements Runnable
     {
         try 
         {
-            updateHeap();
-            ProcessNode current = (ProcessNode)heap.popMin();
-            if(current != null)
+            while(!stopped)
             {
-                Thread.sleep((current).timeSlice);
-                String curTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date());
-                System.out.print("Process with ID " + current.processID + " and priority " + current.priority + " completed at " + curTime + ".");
-            }
-            else
-            {
-                System.out.println("Heap empty, resting...");
-                Thread.sleep(500);
+                //get the next node to process
+                ProcessNode current = (ProcessNode)MinHeap.getInstance().popMin();
+                
+                //so long as we acquired a node, act on it
+                //this sleeps for the timeslice amount of time
+                //then it outputs all required information
+                if(current != null)
+                {
+                    Thread.sleep((current).timeSlice);
+                    String curTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date());
+                    System.out.println("Process with ID " + current.processID + " and priority " + current.priority + " completed at " + curTime + ".");
+                }
+                else
+                {
+                    System.out.println("Heap empty, resting...");
+                    Thread.sleep(1000);
+                }
             }
         } 
         catch (InterruptedException ex) 

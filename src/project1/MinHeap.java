@@ -176,7 +176,7 @@ public class MinHeap<E extends Comparable<? super E>>
     {
         if(numItems <= 0)
         {
-            System.out.println("This heap is empty!");
+            //System.out.println("This heap is empty!");
             return null;
         }
         else
@@ -214,26 +214,41 @@ public class MinHeap<E extends Comparable<? super E>>
     //prints out the heap
     public void printHeap()
     {
-        for(int i=0; i < numItems; i++)
+        if(numItems > 0)
         {
-            if(!isLeaf(i))
+            for(int i=0; i < numItems; i++)
             {
-                String rightChild = hasRightChild(i) ? "" + heap[rightChildPos(i)] : "None";
-                System.out.println("Node: " + heap[i] + ". Left child: " + heap[leftChildPos(i)] + ". Right child: " + rightChild);
+                //not a leaf means it has at least 1 child, so print out in that format
+                if(!isLeaf(i))
+                {
+                    String rightChild = hasRightChild(i) ? "" + heap[rightChildPos(i)] : "None";
+                    System.out.println("Node: " + heap[i] + ". Left child: " + heap[leftChildPos(i)] + ". Right child: " + rightChild);
+                }
+                else
+                {
+                    System.out.println("Leaf: " + heap[i] + ". Parent: " + heap[parentPos(i)]);
+                }
             }
-            else
-            {
-                System.out.println("Leaf: " + heap[i] + ". Parent: " + heap[parentPos(i)]);
-            }
+        }
+        else
+        {
+            System.out.println("The heap is empty!");
         }
     }
     
     //prints just the raw array data
     public void printArray()
     {
-        for(int i=0; i < numItems; i++)
+        if(numItems > 0)
         {
-            System.out.println(heap[i]);
+            for(int i=0; i < numItems; i++)
+            {
+                System.out.println(heap[i]);
+            }
+        }
+        else
+        {
+            System.out.println("The array is empty!");
         }
     }
 }
