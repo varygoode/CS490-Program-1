@@ -1,4 +1,4 @@
-package project1;
+package Program1;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -13,11 +13,14 @@ import java.util.logging.Logger;
 public class ConsumerProcess implements Runnable
 {
     private boolean stopped = false;
+    private int idleTime;
+    private String name;
     
     //constructor
-    public ConsumerProcess() 
+    public ConsumerProcess(String name, int idleTime) 
     {
-        
+        this.idleTime = idleTime;
+        this.name = name;
     }
     
     //method to give a cue to stop
@@ -43,18 +46,18 @@ public class ConsumerProcess implements Runnable
                 {
                     Thread.sleep((current).timeSlice);
                     String curTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date());
-                    System.out.println("Process with ID " + current.processID + " and priority " + current.priority + " completed at " + curTime + ".");
+                    System.out.println(name + ": Process with ID " + current.processID + " and priority " + current.priority + " completed at " + curTime + ".");
                 }
                 else
                 {
-                    System.out.println("Heap empty, resting...");
-                    Thread.sleep(1000);
+                    System.out.println("Heap empty, " + name + " resting...");
+                    Thread.sleep(idleTime);
                 }
             }
         } 
         catch (InterruptedException ex) 
         {
-            Logger.getLogger(Project1.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Program1.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

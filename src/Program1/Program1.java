@@ -1,4 +1,4 @@
-package project1;
+package Program1;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -10,10 +10,13 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
- *
+ * CS490 Program 1
+ * Professor: Beth Allen
+ * Note: Instead of "passing a reference" of the heap through all the threads,
+ * I made it a singleton that is referenced as such in each thread.
  * @author Rob Vary
  */
-public class Project1 
+public class Program1 
 {
     private static final int MYTHREADS = 30;
     
@@ -31,11 +34,14 @@ public class Project1
         //initialize the MinHeap singleton
         heap.init(heapArray, 30, 0);
         
+        //set the idle time for consumer threads in milliseconds
+        int idleTime = 2500;
+        
         //this is to run the threads in parallel instead of sequentially
         ExecutorService executor = Executors.newFixedThreadPool(MYTHREADS);
-        Runnable consumer1 = new ConsumerProcess();
+        Runnable consumer1 = new ConsumerProcess("Consumer Process 1", idleTime);
         executor.execute(consumer1);
-        Runnable consumer2 = new ConsumerProcess();
+        Runnable consumer2 = new ConsumerProcess("Consumer Process 2", idleTime);
         executor.execute(consumer2);
         
         //the creator process object takes in a list of the consumers to stop when done

@@ -1,4 +1,4 @@
-package project1;
+package Program1;
 
 import java.util.ArrayList;
 import java.util.Random;
@@ -83,11 +83,17 @@ public class CreatorProcess implements Runnable
             //run for up to 30 seconds
             while((System.currentTimeMillis() - startTime) < 30000)
             {
+                //create the first node very fast
+                if(nodeCount == 0)
+                {
+                    MinHeap.getInstance().insert(new ProcessNode(getNewProcessID(), getRandomPriority(), getRandomTimeSlice()));
+                    nodeCount++;
+                }
+
                 //create and insert no more than 20 nodes
                 if(nodeCount < 20)
                 {
-                    Random rand = new Random();
-                    Thread.sleep(rand.nextInt(2000));
+                    Thread.sleep(1500);
                     MinHeap.getInstance().insert(new ProcessNode(getNewProcessID(), getRandomPriority(), getRandomTimeSlice()));
                     nodeCount++;
                 }
@@ -101,7 +107,7 @@ public class CreatorProcess implements Runnable
         } 
         catch (InterruptedException ex) 
         {
-            Logger.getLogger(Project1.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(Program1.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 }
