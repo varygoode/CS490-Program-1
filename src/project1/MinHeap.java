@@ -1,5 +1,7 @@
 package project1;
 
+import java.util.ArrayList;
+
 /**
  * MinHeap Data Structure
  * @author Rob Vary
@@ -7,12 +9,20 @@ package project1;
  */
 public class MinHeap<E extends Comparable<? super E>>
 {
-    public final E[] heap;       //heap array
-    private final int max;    //max size
+    public E[] heap;       //heap array
+    private int max;    //max size
     private int numItems;    //number of items in heap
+    private static MinHeap instance = null;
     
-    //constructor
-    public MinHeap(E[] heap, int max, int numItems)
+    private MinHeap()
+    {
+        heap = null;
+        max = 0;
+        numItems = 0;
+    }
+
+    //initializer
+    public void init(E[] heap, int max, int numItems)
     {
         this.heap = heap;
         this.max = max;
@@ -20,6 +30,17 @@ public class MinHeap<E extends Comparable<? super E>>
         
         //make it a minheap!
         heapify();
+    }
+    
+    //singleton implementation
+    public static MinHeap getInstance()
+    {
+        if(instance == null)
+        {
+            instance = new MinHeap();
+        }
+        
+        return instance;
     }
     
     //get the position of the parent
@@ -56,7 +77,7 @@ public class MinHeap<E extends Comparable<? super E>>
     }
     
     //insert into the min heap in appropriate position
-    public void insert(E item)
+    public synchronized void insert(E item)
     {
         //only insert if there's room
         if(numItems >= max)
@@ -78,7 +99,7 @@ public class MinHeap<E extends Comparable<? super E>>
     }
     
     //remove item at specified position
-    public E remove(int pos)
+    public synchronized E remove(int pos)
     {
         if(pos < 0 || pos >= max)
         {
@@ -151,7 +172,7 @@ public class MinHeap<E extends Comparable<? super E>>
     }
     
     //remove and return the minimum value
-    public E popMin()
+    public synchronized E popMin()
     {
         if(numItems <= 0)
         {
@@ -177,6 +198,20 @@ public class MinHeap<E extends Comparable<? super E>>
         heap[pos2] = temp;
     }
     
+    //returns an arraylist of all items in array
+    public ArrayList<E> getItems()
+    {
+        ArrayList<E> items = new ArrayList<E>();
+        
+        for(int i=0; i < numItems; i++)
+        {
+            items.add(heap[i]);
+        }
+        
+        return items;
+    }
+
+    //prints out the heap
     public void printHeap()
     {
         for(int i=0; i < numItems; i++)
@@ -193,6 +228,7 @@ public class MinHeap<E extends Comparable<? super E>>
         }
     }
     
+    //prints just the raw array data
     public void printArray()
     {
         for(int i=0; i < numItems; i++)
