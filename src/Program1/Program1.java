@@ -25,6 +25,9 @@ public class Program1
      */
     public static void main(String[] args)
     {
+        System.out.println("The creator process will create no more than 20 nodes.");
+        System.out.println("The consumer processes will be notified to stop running when the heap is empty and the creator process is complete.");
+
         //get the singleton heap fired up
         MinHeap heap = MinHeap.getInstance();
         
@@ -35,7 +38,7 @@ public class Program1
         heap.init(heapArray, 30, 0);
         
         //set the idle time for consumer threads in milliseconds
-        int idleTime = 2500;
+        int idleTime = 1000;
         
         //this is to run the threads in parallel instead of sequentially
         ExecutorService executor = Executors.newFixedThreadPool(MYTHREADS);
@@ -43,16 +46,7 @@ public class Program1
         executor.execute(consumer1);
         Runnable consumer2 = new ConsumerProcess("Consumer Process 2", idleTime);
         executor.execute(consumer2);
-        
-        //the creator process object takes in a list of the consumers to stop when done
-        ArrayList<ConsumerProcess> consumers = new ArrayList<ConsumerProcess>(){
-            {
-                add((ConsumerProcess)consumer1);
-                add((ConsumerProcess)consumer2);
-            }
-        };
-        
-        Runnable creator = new CreatorProcess(consumers);
+        Runnable creator = new CreatorProcess();
         executor.execute(creator);
         
         executor.shutdown();
@@ -61,10 +55,17 @@ public class Program1
         {
             //all the stuff to do is being done in the threads
             //this just ensures the program doesn't quit early
+            if(((CreatorProcess)creator).stopped)
+            {
+                if(MinHeap.getInstance().heapSize() <= 0)
+                {
+                    //stop the consumer processes
+                    ((ConsumerProcess)consumer1).stop();
+                    ((ConsumerProcess)consumer2).stop();
+                }
+            }
         }
         
-        //show what our cutoff condition made us miss
-        System.out.println("\n\nHeap after cutoff condition:");
         MinHeap.getInstance().printHeap();
     }    
 }

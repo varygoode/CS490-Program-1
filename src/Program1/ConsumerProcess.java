@@ -54,6 +54,8 @@ public class ConsumerProcess implements Runnable
                     Thread.sleep(idleTime);
                 }
             }
+            
+            System.out.println(name + " loop finished!");
         } 
         catch (InterruptedException ex) 
         {

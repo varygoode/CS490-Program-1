@@ -1,6 +1,8 @@
 package Program1;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -11,16 +13,16 @@ import java.util.logging.Logger;
  */
 public class CreatorProcess implements Runnable
 {
-    //our list of consumer threads
-    ArrayList<ConsumerProcess> consumers;
-    
     //number of nodes added so far
     int nodeCount = 0;
+    
+    //stop condition
+    public boolean stopped = false;
 
     //constructor
-    public CreatorProcess(ArrayList<ConsumerProcess> consumers) 
+    public CreatorProcess() 
     {
-        this.consumers = consumers;
+        
     }
 
     //randomly acquire an unused process ID between 100 and 1000
@@ -77,33 +79,35 @@ public class CreatorProcess implements Runnable
     {
         try 
         {
-            //note start time
-            double startTime = System.currentTimeMillis();
-            
-            //run for up to 30 seconds
-            while((System.currentTimeMillis() - startTime) < 30000)
+            while(!stopped)
             {
                 //create the first node very fast
                 if(nodeCount == 0)
                 {
-                    MinHeap.getInstance().insert(new ProcessNode(getNewProcessID(), getRandomPriority(), getRandomTimeSlice()));
-                    nodeCount++;
+                    ProcessNode newOne = new ProcessNode(getNewProcessID(), getRandomPriority(), getRandomTimeSlice());
+                    MinHeap.getInstance().insert(newOne);
+                    nodeCount++;                    
+                    
+                    String curTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date());
+                    System.out.println("Creator process added process with ID " + newOne.processID + " and priority " + newOne.priority + " and time slice " + newOne.timeSlice + " at " + curTime + ".");
                 }
-
                 //create and insert no more than 20 nodes
-                if(nodeCount < 20)
+                else if(nodeCount < 20)
                 {
-                    Thread.sleep(1500);
-                    MinHeap.getInstance().insert(new ProcessNode(getNewProcessID(), getRandomPriority(), getRandomTimeSlice()));
-                    nodeCount++;
+                    Thread.sleep(2000);
+                    ProcessNode newOne = new ProcessNode(getNewProcessID(), getRandomPriority(), getRandomTimeSlice());
+                    MinHeap.getInstance().insert(newOne);
+                    nodeCount++;                   
+                    
+                    String curTime = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS").format(new Date());
+                    System.out.println("Creator process added process with ID " + newOne.processID + " and priority " + newOne.priority + " and time slice " + newOne.timeSlice + " at " + curTime + ".");
+                }
+                else
+                {
+                    stopped = true;
                 }
             }
-            
-            //once we exit the while loop, stop the consumer processes, too
-            for(ConsumerProcess consumer : consumers)
-            {
-                consumer.stop();
-            }
+            System.out.println("Creator loop finished!!!");
         } 
         catch (InterruptedException ex) 
         {
